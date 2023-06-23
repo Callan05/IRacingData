@@ -1,13 +1,15 @@
 package IRacingData
 
-// V1.0.0
+// V1.1.0
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/cookiejar"
+	"strconv"
 	"strings"
 )
 
@@ -120,4 +122,211 @@ func Init(email string, hash string) {
 	}
 	fmt.Println("iRacing Session Started")
 	irsession = session
+}
+
+func followLink(url string) (map[string]any, error) {
+
+	method := "GET"
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	res, err := irsession.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	var jsondata map[string]any
+	json.Unmarshal([]byte(body), &jsondata)
+
+	return (jsondata), nil
+
+}
+func GetLeague(leagueID string) (map[string]any, error) {
+
+	url := irapi + "data/league/get?league_id=" + leagueID
+	method := "GET"
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	res, err := irsession.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	var link leagueResponseLink
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	if err := json.Unmarshal(body, &link); err != nil { // Parse []byte to go struct pointer
+		fmt.Println("Can not unmarshal JSON")
+	}
+
+	data, err := followLink(link.Link)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	ret := data
+	return ret, nil
+}
+
+func GetLeagueSessions(leagueID string, seasonID string, resultsOnly bool) ([]Session, error) {
+
+	var url string = irapi + "data/league/season_sessions?league_id=" + leagueID + "&season_id=" + seasonID
+	if resultsOnly {
+		url += "&results_only=true"
+	}
+	method := "GET"
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	res, err := irsession.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	var link leagueResponseLink
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	if err := json.Unmarshal(body, &link); err != nil {
+		fmt.Println("Can not unmarshal JSON")
+	}
+
+	req2, err := http.NewRequest(method, link.Link, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	res2, err := irsession.Do(req2)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer res2.Body.Close()
+
+	body2, err := ioutil.ReadAll(res2.Body)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	var season LeagueSeason
+	json.Unmarshal([]byte(body2), &season)
+
+	return (season.Sessions), nil
+
+}
+
+func GetLeagueSeasons(leagueID string) (map[string]any, error) {
+
+	var url string = irapi + "data/league/seasons?league_id=" + leagueID
+	method := "GET"
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	res, err := irsession.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	var link leagueResponseLink
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	if err := json.Unmarshal(body, &link); err != nil {
+		fmt.Println("Can not unmarshal JSON")
+	}
+
+	data, err := followLink(link.Link)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	ret := data
+	return ret, nil
+}
+
+func GetSession(sessionId int) (RaceResult, error) {
+	var ret RaceResult
+	var url string = irapi + "data/results/get?include_licenses=false&subsession_id=" + strconv.Itoa(sessionId)
+	fmt.Println(url)
+	method := "GET"
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return ret, err
+	}
+
+	res, err := irsession.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return ret, err
+	}
+	defer res.Body.Close()
+
+	var link leagueResponseLink
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return ret, err
+	}
+
+	if err := json.Unmarshal(body, &link); err != nil {
+		fmt.Println("Can not unmarshal JSON")
+	}
+
+	data, err := followLink(link.Link)
+	if err != nil {
+		fmt.Println(err)
+		return ret, err
+	}
+
+	jsonString, _ := json.Marshal(data)
+	var s RaceResult
+	json.Unmarshal(jsonString, &s)
+
+	ret = s
+	return ret, nil
 }
