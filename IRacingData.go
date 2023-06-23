@@ -1,5 +1,7 @@
 package IRacingData
 
+// V1.0.0
+
 import (
 	"fmt"
 	"io/ioutil"
