@@ -110,11 +110,12 @@ func auth(email string, hash string) (*http.Client, error) {
 	return client, nil
 }
 func Init(email string, hash string) {
-	fmt.Println("iRacing INIT")
+	fmt.Println("iRacing Init() called")
 	session, err := auth(email, hash)
 
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("iRacing Session Started")
 	irsession = session
 }
