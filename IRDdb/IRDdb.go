@@ -1,6 +1,7 @@
 package IRDdb
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -13,7 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
 )
 
-type Session struct {
+type DBSession struct {
 	RaceID int
 	PK     string
 	Data   IRacingData.Session
@@ -57,6 +58,8 @@ func GetSession(sessionID string) (IRacingData.Session, error) {
 	if err != nil {
 		return IRacingData.Session{}, err
 	}
+	j, _ := json.MarshalIndent(result, "", "  ")
+	fmt.Println(string(j))
 
 	if result.Item == nil {
 		return IRacingData.Session{}, errors.New("item not found in DB")
@@ -70,7 +73,7 @@ func GetSession(sessionID string) (IRacingData.Session, error) {
 
 func AddSession(session IRacingData.Session, raceID int) {
 
-	item := Session{
+	item := DBSession{
 		PK:     "session",
 		SK:     strconv.Itoa(session.Session_id),
 		RaceID: raceID,
