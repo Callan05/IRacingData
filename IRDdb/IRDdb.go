@@ -52,14 +52,11 @@ func GetSession(sessionID string) (IRacingData.Session, error) {
 			},
 		},
 	}
-	fmt.Print(query)
 
 	result, err := client.GetItem(query)
 	if err != nil {
 		return IRacingData.Session{}, err
 	}
-	j, _ := json.MarshalIndent(result, "", "  ")
-	fmt.Println(string(j))
 
 	if result.Item == nil {
 		return IRacingData.Session{}, errors.New("item not found in DB")
@@ -67,6 +64,9 @@ func GetSession(sessionID string) (IRacingData.Session, error) {
 
 	var ret IRacingData.Session
 	dynamodbattribute.UnmarshalMap(result.Item, &ret)
+
+	j, _ := json.MarshalIndent(ret, "", "  ")
+	fmt.Println(string(j))
 
 	return ret, nil
 }
