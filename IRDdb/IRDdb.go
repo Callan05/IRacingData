@@ -62,13 +62,13 @@ func GetSession(sessionID string) (IRacingData.Session, error) {
 		return IRacingData.Session{}, errors.New("item not found in DB")
 	}
 
-	var ret IRacingData.Session
+	var ret DBSession
 	dynamodbattribute.UnmarshalMap(result.Item, &ret)
 
 	j, _ := json.MarshalIndent(ret, "", "  ")
 	fmt.Println(string(j))
 
-	return ret, nil
+	return ret.Data, nil
 }
 
 func AddSession(session IRacingData.Session, raceID int) {
