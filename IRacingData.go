@@ -71,6 +71,7 @@ type RaceResult struct {
 	Event_laps_complete int
 	Track               Track
 	League_season_id    int
+	RaceID              int
 }
 
 func auth(email string, hash string) (*http.Client, error) {

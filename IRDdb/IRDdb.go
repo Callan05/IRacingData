@@ -72,12 +72,11 @@ func GetSession(sessionID string) (IRacingData.Session, error) {
 }
 
 func AddSession(session IRacingData.Session, raceID int) {
-
+	session.Results.RaceID = raceID
 	item := DBSession{
-		PK:     "session",
-		SK:     strconv.Itoa(session.Session_id),
-		RaceID: raceID,
-		Data:   session,
+		PK:   "session",
+		SK:   strconv.Itoa(session.Session_id),
+		Data: session,
 	}
 
 	av, err := dynamodbattribute.MarshalMap(item)
