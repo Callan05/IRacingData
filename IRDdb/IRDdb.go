@@ -159,10 +159,12 @@ func GetLeagueStandings(leagueID string, seasonID string) (IRacingData.League_Se
 }
 
 func AddLeagueStandings(session IRacingData.League_Season_Standings, raceID int) {
+	leagueID := strconv.Itoa(session.League_id)
+	seasonID := strconv.Itoa(session.Season_id)
 
 	item := DBLeague_Season_Standings{
 		PK:   "league_standings",
-		SK:   IRacingData.League_Season_Standings.League_id + "|" + IRacingData.League_Season_Standings.Season_id,
+		SK:   leagueID + "|" + seasonID,
 		Data: session,
 	}
 
