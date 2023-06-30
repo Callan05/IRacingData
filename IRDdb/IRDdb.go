@@ -21,6 +21,12 @@ type DBSession struct {
 	SK     string
 }
 
+type DBLeague_Season_Standings struct {
+	PK   string
+	Data IRacingData.League_Season_Standings
+	SK   string
+}
+
 var tableName string
 var client *dynamodb.DynamoDB
 
@@ -119,4 +125,61 @@ func FindSession(sessionID int) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func GetLeagueStandings(leagueID string, seasonID string) (IRacingData.League_Season_Standings, error) {
+	query := &dynamodb.GetItemInput{
+		TableName: aws.String(tableName),
+		Key: map[string]*dynamodb.AttributeValue{
+			"PK": {
+				S: aws.String("league_standings"),
+			},
+			"SK": {
+				S: aws.String(leagueID + "|" + seasonID),
+			},
+		},
+	}
+
+	result, err := client.GetItem(query)
+	if err != nil {
+		return IRacingData.League_Season_Standings{}, err
+	}
+
+	if result.Item == nil {
+		return IRacingData.League_Season_Standings{}, errors.New("item not found in DB")
+	}
+
+	var ret DBLeague_Season_Standings
+	dynamodbattribute.UnmarshalMap(result.Item, &ret)
+
+	j, _ := json.MarshalIndent(ret, "", "  ")
+	fmt.Println(string(j))
+
+	return ret.Data, nil
+}
+
+func AddLeagueStandings(session IRacingData.League_Season_Standings, raceID int) {
+
+	item := DBLeague_Season_Standings{
+		PK:   "league_standings",
+		SK:   IRacingData.League_Season_Standings.LeagueID + "|" + IRacingData.League_Season_Standings.Season_id,
+		Data: session,
+	}
+
+	av, err := dynamodbattribute.MarshalMap(item)
+	if err != nil {
+		log.Fatalf("Got error marshalling new item: %s", err)
+	}
+
+	input := &dynamodb.PutItemInput{
+		Item:      av,
+		TableName: aws.String(tableName),
+	}
+
+	_, err = client.PutItem(input)
+	if err != nil {
+		log.Fatalf("Got error calling PutItem: %s", err)
+	}
+
+	fmt.Println("Success")
 }

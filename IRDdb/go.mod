@@ -3,7 +3,7 @@ module github.com/Callan05/IRacingData/IRDdb
 go 1.19
 
 require (
-	github.com/Callan05/IRacingData v1.1.0
+	github.com/Callan05/IRacingData v1.1.5
 	github.com/aws/aws-sdk-go v1.44.289
 )
 
