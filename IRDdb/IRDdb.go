@@ -162,7 +162,7 @@ func AddLeagueStandings(session IRacingData.League_Season_Standings, raceID int)
 
 	item := DBLeague_Season_Standings{
 		PK:   "league_standings",
-		SK:   IRacingData.League_Season_Standings.LeagueID + "|" + IRacingData.League_Season_Standings.Season_id,
+		SK:   IRacingData.League_Season_Standings.League_id + "|" + IRacingData.League_Season_Standings.Season_id,
 		Data: session,
 	}
 
