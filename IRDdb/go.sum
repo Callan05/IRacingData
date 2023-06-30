@@ -4,6 +4,8 @@ github.com/Callan05/IRacingData v1.1.4 h1:vc5SxwU5B1luDvdCsBhV1Nz3prG2cmFOz5flNs
 github.com/Callan05/IRacingData v1.1.4/go.mod h1:3afLbKph8Asnm5rrIrMMV50ORKua0I4QEG28wjTdasM=
 github.com/Callan05/IRacingData v1.1.5 h1:HGtJnijT+mcr/gsCdUfVMMvI+c+uK0XJFHlyFa4sN4c=
 github.com/Callan05/IRacingData v1.1.5/go.mod h1:3afLbKph8Asnm5rrIrMMV50ORKua0I4QEG28wjTdasM=
+github.com/Callan05/IRacingData v1.1.6 h1:OpJWEN7dhYGttO1OHRdk59v7E0cr4apNujfy5fnpm2k=
+github.com/Callan05/IRacingData v1.1.6/go.mod h1:3afLbKph8Asnm5rrIrMMV50ORKua0I4QEG28wjTdasM=
 github.com/aws/aws-sdk-go v1.44.289 h1:5CVEjiHFvdiVlKPBzv0rjG4zH/21W/onT18R5AH/qx0=
 github.com/aws/aws-sdk-go v1.44.289/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

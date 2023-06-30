@@ -74,6 +74,41 @@ type RaceResult struct {
 	RaceID              int
 }
 
+type League_Season_Standings struct {
+	Car_class_id int
+	Success      bool
+	Season_id    int
+	Car_id       int
+	Standings    Standings
+	League_id    int
+}
+
+type Standings struct {
+	Driver_standings []Driver_Standings
+	Team_standings   []Team_Standings
+}
+type Driver_Standings struct {
+	Rownum               int
+	Position             int
+	Driver               Driver
+	Car_number           int
+	Driver_nickname      string
+	Wins                 int
+	Average_start        int
+	Average_finish       int
+	Base_points          int
+	Negative_adjustments int
+	Positive_adjustments int
+	Total_adjustments    int
+	Total_points         int
+}
+type Driver struct {
+	Cust_id      int
+	Display_name string
+}
+type Team_Standings struct {
+}
+
 func auth(email string, hash string) (*http.Client, error) {
 	var jar, err = cookiejar.New(nil)
 	if err != nil {
@@ -247,6 +282,64 @@ func GetLeagueSessions(leagueID string, seasonID string, resultsOnly bool) ([]Se
 	json.Unmarshal([]byte(body2), &season)
 
 	return (season.Sessions), nil
+
+}
+
+func GetLeagueSeasonStandings(leagueID string, seasonID string, resultsOnly bool) (League_Season_Standings, error) {
+	var season League_Season_Standings
+	var url string = irapi + "data/league/season_standings?league_id=" + leagueID + "&season_id=" + seasonID
+	if resultsOnly {
+		url += "&results_only=true"
+	}
+	method := "GET"
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return season, err
+	}
+
+	res, err := irsession.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return season, err
+	}
+	defer res.Body.Close()
+
+	var link leagueResponseLink
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return season, err
+	}
+
+	if err := json.Unmarshal(body, &link); err != nil {
+		fmt.Println("Can not unmarshal JSON")
+	}
+
+	req2, err := http.NewRequest(method, link.Link, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return season, err
+	}
+
+	res2, err := irsession.Do(req2)
+	if err != nil {
+		fmt.Println(err)
+		return season, err
+	}
+	defer res2.Body.Close()
+
+	body2, err := ioutil.ReadAll(res2.Body)
+	if err != nil {
+		fmt.Println(err)
+		return season, err
+	}
+
+	json.Unmarshal([]byte(body2), &season)
+
+	return (season), nil
 
 }
 
