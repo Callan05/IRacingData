@@ -59,11 +59,12 @@ type Result struct {
 }
 
 type SessionResult struct {
-	Simsession_name     string
-	Simsession_type_nam string
-	Simsession_type     string
-	Simsession_number   int
-	Results             []Result
+	Simsession_name      string `json:"simsession_name"`
+	Simsession_type_name string `json:"simsession_type_name"`
+	Simsession_type      string `json:"simsession_type"`
+	Simsession_subtype   string `json:"simsession_subtype"`
+	Simsession_number    int    `json:"simsession_number"`
+	Results              []Result
 }
 
 type RaceResult struct {
