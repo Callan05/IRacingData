@@ -59,7 +59,11 @@ type Result struct {
 }
 
 type SessionResult struct {
-	Results []Result
+	Simsession_name     string
+	Simsession_type_nam string
+	Simsession_type     string
+	Simsession_number   int
+	Results             []Result
 }
 
 type RaceResult struct {
@@ -285,12 +289,10 @@ func GetLeagueSessions(leagueID string, seasonID string, resultsOnly bool) ([]Se
 
 }
 
-func GetLeagueSeasonStandings(leagueID string, seasonID string, resultsOnly bool) (League_Season_Standings, error) {
+func GetLeagueSeasonStandings(leagueID string, seasonID string) (League_Season_Standings, error) {
 	var season League_Season_Standings
 	var url string = irapi + "data/league/season_standings?league_id=" + leagueID + "&season_id=" + seasonID
-	if resultsOnly {
-		url += "&results_only=true"
-	}
+
 	method := "GET"
 	req, err := http.NewRequest(method, url, nil)
 
